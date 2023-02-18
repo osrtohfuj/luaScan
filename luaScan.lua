@@ -6,7 +6,7 @@ local socket = require("socket")
 local io = require("io")
 
 -- Define command-line arguments
-local parser = argparse("lua-scan", "A Lua-based port scanning utility.")
+local parser = argparse("luaScan", "A Lua-based port scanning utility.")
 parser:option("-t --target", "The target IP address or hostname."):count(1)
 parser:option("-p --ports", "The port range to scan."):count("*")
 parser:option("-r --rate", "The packets per second to send."):count(1)
@@ -23,7 +23,7 @@ local rate = args.rate or "10000"
 local port_range_str = table.concat(port_range, ",")
 
 -- Run masscan to detect open ports
-local masscan_cmd = string.format("masscan %s -p %s --rate %s --open --max-rate %s ", target, port_range_str, rate, rate)
+local masscan_cmd = string.format("masscan %s -p %s --rate %s --open --max-rate %s --wait 3", target, port_range_str, rate, rate)
 local masscan_output = io.popen(masscan_cmd)
 local open_ports = {}
 
@@ -43,3 +43,8 @@ local nmap_output = io.popen(nmap_cmd)
 for line in nmap_output:lines() do
   print(line)
 end
+
+-- remove temporary junk files
+os.remove("masscan_output.gnmap")
+os.remove("nil")
+os.remove("masscan")
